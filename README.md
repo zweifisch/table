@@ -16,7 +16,16 @@ Then, update your dependencies:
 
 ## Usage
 
-    IO.write Table.table(%{"key"=> "value"})
+    iex> IO.write Table.table(%{"key"=> "value"})
+    +-----+-------+
+    | key | value |
+    +-----+-------+
 
-    IO.write Table.table([%{"style"=> :ascii},
-                          %{"style"=> :unicode}], :unicode)
+    iex> IO.write Table.table([%{"style"=> :ascii},
+                               %{"style"=> :unicode}], :unicode)
+    ┌──────────┐
+    │ style    │
+    ├──────────┤
+    │ :ascii   │
+    │ :unicode │
+    └──────────┘
