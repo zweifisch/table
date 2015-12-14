@@ -89,12 +89,14 @@ defmodule Table do
         keys = Dict.keys(data)
         values = Enum.map keys, fn(x)-> Dict.get(data, x) end
         cond do
+          Dict.size(data) == 0 -> ""
           Enum.all?(values, &is_list/1) -> matrix(keys, values, style)
           true -> matrix(Enum.map(Enum.zip(keys, values), &Tuple.to_list/1), style)
         end
 
       is_list(data) ->
         cond do
+          Enum.count(data) == 0 -> ""
           Enum.all?(data, &is_list/1) -> matrix(data, style)
           Enum.all?(data, &is_map/1) ->
             header = Dict.keys List.first data
