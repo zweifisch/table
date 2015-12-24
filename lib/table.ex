@@ -69,10 +69,18 @@ defmodule Table do
 
   Examples
 
-      iex> IO.write Table.table(%{"key"=> "value"})
-      +-----+-------+
-      | key | value |
-      +-----+-------+
+      iex> IO.write Table.table(%{"key"=> "value", "more"=> "more val"})
+      +------+----------+
+      | key  | value    |
+      | more | more val |
+      +------+----------+
+
+      iex> IO.write Table.table(["list", "is", "vertical"])
+      +----------+
+      | list     |
+      | is       |
+      | vertical |
+      +----------+
 
       iex> IO.write Table.table([%{"style"=> :ascii},
                                  %{"style"=> :unicode}], :unicode)
@@ -102,7 +110,7 @@ defmodule Table do
             header = Dict.keys List.first data
             data = Enum.map(data, fn(row)-> Enum.map(header, &(Dict.get(row, &1))) end)
             matrix(header, data, style)
-          true -> data = [data]
+          true -> data |> Enum.map(fn(x)-> [x] end) |> matrix(style)
         end
     end
   end
