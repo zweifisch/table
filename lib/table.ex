@@ -26,7 +26,30 @@ defmodule Table do
   end
 
   defp force_string(thing) do
-    if is_bitstring(thing), do: thing, else: inspect(thing)
+    if is_bitstring(thing), do: thing, else: inspect(thing, pretty: true)
+  end
+
+  def handle_multi_line(rows) do
+    rows |> Enum.flat_map(&handle_multi_line_row/1)
+  end
+
+  defp handle_multi_line_row(row) do
+    splited = row |> Enum.map(&(String.split(&1, "\n")))
+    max_lines = splited
+        |> Enum.map(&Enum.count/1)
+        |> Enum.max
+    splited
+        |> Enum.map(&fill_list(&1, max_lines, ""))
+        |> List.zip
+        |> Enum.map(&Tuple.to_list(&1))
+  end
+
+  defp fill_list(l, length, val) do
+    len = length - Enum.count(l)
+    cond do
+      len > 0 -> Enum.concat(l, Enum.map(1..len, fn(_)-> val end))
+      true -> l
+    end
   end
 
   defp ensure_string(rows) do
@@ -34,7 +57,7 @@ defmodule Table do
   end
 
   defp matrix(body, style) do
-    body = ensure_string(body)
+    body = body |> ensure_string |> handle_multi_line
     style = @styles[style]
     sizes = compute_size(body)
     empty = Enum.zip(Enum.map(sizes, fn(_)-> "" end), sizes)
@@ -47,7 +70,7 @@ defmodule Table do
 
   defp matrix(header, body, style) do
     header = Enum.map(header, &force_string/1)
-    body = ensure_string(body)
+    body = body |> ensure_string |> handle_multi_line
     style = @styles[style]
     sizes = compute_size([header] ++ body)
     empty = Enum.zip(Enum.map(sizes, fn(_)-> "" end), sizes)

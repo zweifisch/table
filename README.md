@@ -1,5 +1,7 @@
 # Table
 
+[![hex][hex-image]][hex-url]
+
 ascii tables for cli
 
 ## Installation
@@ -7,7 +9,7 @@ ascii tables for cli
 First, add `table` to your dependencies in `mix.exs`:
 
     def deps do
-        [{:table, "~> 0.0.3"}]
+        [{:table, "~> 0.0.4"}]
     end
 
 Then, update your dependencies:
@@ -29,3 +31,12 @@ Then, update your dependencies:
     │ :ascii   │
     │ :unicode │
     └──────────┘
+
+    iex> IO.write Table.table(%{"key"=> "multiline\nvalue"}, :unicode)
+    ┌─────┬───────────┐
+    │ key ╎ multiline │
+    │     ╎ value     │
+    └─────┴───────────┘
+
+[hex-image]: https://img.shields.io/hexpm/v/table.svg?style=flat
+[hex-url]: https://hex.pm/packages/table
