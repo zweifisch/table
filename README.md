@@ -9,7 +9,7 @@ ascii tables for cli
 First, add `table` to your dependencies in `mix.exs`:
 
     def deps do
-        [{:table, "~> 0.0.4"}]
+        [{:table, "~> 0.0.5"}]
     end
 
 Then, update your dependencies:

@@ -15,13 +15,19 @@ defmodule Table do
 
   defp row(cells, walls, pad \\ ?\s) do
     [first, mid, last] = walls
-    line = cells |> Enum.map(fn({content, width})-> String.ljust(content, width, pad) end)
+    line = cells |> Enum.map(fn({content, width})->
+                        String.ljust(content, String.length(content) - string_length(content) + width, pad) end)
                  |> Enum.join(mid)
     "#{first}#{line}#{last}"
   end
 
+  defp string_length(str) do
+    Regex.replace(~r/[\x{001b}\x{009b}][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/u, str, "")
+      |> String.length
+  end
+
   defp compute_size(rows) do
-    rows |> Enum.map(fn(row)-> Enum.map(row, &String.length/1) end)
+    rows |> Enum.map(fn(row)-> Enum.map(row, &string_length/1) end)
          |> Enum.reduce(fn(row, acc)-> Enum.map(Enum.zip(row, acc), fn({a, b})-> max(a, b) end) end)
   end
 
@@ -105,12 +111,12 @@ defmodule Table do
       | vertical |
       +----------+
 
-      iex> IO.write Table.table([%{"style"=> :ascii},
+      iex> IO.write Table.table([%{"style"=> :plain},
                                  %{"style"=> :unicode}], :unicode)
       ┌──────────┐
       │ style    │
       ├──────────┤
-      │ :ascii   │
+      │ :plain   │
       │ :unicode │
       └──────────┘
   """
