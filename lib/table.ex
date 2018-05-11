@@ -15,20 +15,24 @@ defmodule Table do
 
   defp row(cells, walls, pad \\ ?\s) do
     [first, mid, last] = walls
-    line = cells |> Enum.map(fn({content, width})->
-                        String.ljust(content, String.length(content) - string_length(content) + width, pad) end)
-                 |> Enum.join(mid)
+    line =
+      cells
+      |> Enum.map(fn({content, width}) ->
+        String.ljust(content, String.length(content) - string_length(content) + width, pad)
+      end)
+      |> Enum.join(mid)
     "#{first}#{line}#{last}"
   end
 
   defp string_length(str) do
     Regex.replace(~r/[\x{001b}\x{009b}][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/u, str, "")
-      |> String.length
+    |> String.length()
   end
 
   defp compute_size(rows) do
-    rows |> Enum.map(fn(row)-> Enum.map(row, &string_length/1) end)
-         |> Enum.reduce(fn(row, acc)-> Enum.map(Enum.zip(row, acc), fn({a, b})-> max(a, b) end) end)
+    rows
+    |> Enum.map(fn(row) -> Enum.map(row, &string_length/1) end)
+    |> Enum.reduce(fn(row, acc) -> Enum.map(Enum.zip(row, acc), fn({a, b}) -> max(a, b) end) end)
   end
 
   defp force_string(thing) do
@@ -40,14 +44,19 @@ defmodule Table do
   end
 
   defp handle_multi_line_row(row) do
-    splited = row |> Enum.map(&(String.split(&1, "\n")))
-    max_lines = splited
-        |> Enum.map(&Enum.count/1)
-        |> Enum.max
+    splited =
+      row
+      |> Enum.map(&(String.split(&1, "\n")))
+
+    max_lines =
+      splited
+      |> Enum.map(&Enum.count/1)
+      |> Enum.max()
+
     splited
-        |> Enum.map(&fill_list(&1, max_lines, ""))
-        |> List.zip
-        |> Enum.map(&Tuple.to_list(&1))
+    |> Enum.map(&fill_list(&1, max_lines, ""))
+    |> List.zip()
+    |> Enum.map(&Tuple.to_list(&1))
   end
 
   defp fill_list(l, length, val) do
@@ -76,7 +85,7 @@ defmodule Table do
 
   defp matrix(header, body, style) do
     header = Enum.map(header, &force_string/1)
-    body = body |> ensure_string |> handle_multi_line
+    body = body |> ensure_string() |> handle_multi_line()
     style = @styles[style]
     sizes = compute_size([header] ++ body)
     empty = Enum.zip(Enum.map(sizes, fn(_)-> "" end), sizes)
@@ -119,6 +128,11 @@ defmodule Table do
       │ :plain   │
       │ :unicode │
       └──────────┘
+
+      iex> IO.write Table.table([["list", "is", "horizontal"]])
+      +------+----+-----------+
+      | list | is | horizontal|
+      +------+----+-----------+
   """
   def table(data, style \\ :plain) do
     cond do

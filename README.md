@@ -38,5 +38,10 @@ Then, update your dependencies:
     │     ╎ value     │
     └─────┴───────────┘
 
+    iex> IO.write Table.table([["list", "is", "horizontal"]])
+    +------|----|-----------+
+    | list | is | horizontal|
+    +------|----|-----------+
+
 [hex-image]: https://img.shields.io/hexpm/v/table.svg?style=flat
 [hex-url]: https://hex.pm/packages/table
