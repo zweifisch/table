@@ -22,8 +22,10 @@ defmodule Table do
   end
 
   defp string_length(str) do
-    Regex.replace(~r/[\x{001b}\x{009b}][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/u, str, "")
-      |> String.length
+    str = Regex.replace(~r/[\x{001b}\x{009b}][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/u, str, "")
+    # Remove common form of opening/closing HTML tags
+    Regex.replace(~r|<.*?>|u, str, "")
+    |> String.length()
   end
 
   defp compute_size(rows) do
